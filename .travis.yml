@@ -1,0 +1,5 @@
+services:
+  - docker
+
+script:
+  - cd docker && docker build -t bpy_lamda .
