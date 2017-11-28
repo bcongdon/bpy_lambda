@@ -8,6 +8,7 @@ RUN mkdir ~/blender-git && \
     cd ~/blender-git && \
     git clone https://git.blender.org/blender.git && \
     cd blender && \
+    git checkout tags/v2.79 && \
     git submodule update --init --recursive && \
     git submodule foreach git checkout master && \
     git submodule foreach git pull --rebase origin master
@@ -70,7 +71,7 @@ RUN cd ~/blender-git/blender_build && \
 
 RUN mkdir /bpy_lambda && \
     cd /bpy_lambda && \
-    cp -R ~/blender-git/blender_build/bin/2.78 . && \
+    cp -R ~/blender-git/blender_build/bin/2.79 . && \
     cp -R ~/blender-git/blender_build/bin/bpy.so . && \
     cp -L /usr/lib64/libpython3.5m.so.1.0 . && \
     cp -L /usr/lib64/libGLU.so.1 .
