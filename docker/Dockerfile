@@ -21,7 +21,7 @@ RUN yum install gcc-c++ \
     xvidcore-devel libogg-devel faac-devel \
     libjpeg-devel openjpeg openjpeg-devel \
     faad2-devel x264-devel libpng-devel vim \
-    libGLU-devel -y
+    libGLU-devel wget -y
 
 RUN git clone https://github.com/nigels-com/glew ~/glew && \
     cd ~/glew && \
@@ -29,15 +29,33 @@ RUN git clone https://github.com/nigels-com/glew ~/glew && \
     make && \
     make install
 
+RUN ~/blender-git/blender/build_files/build_environment/install_deps.sh --no-sudo --no-confirm \
+    --build-boost \
+    --build-openexr \
+    --build-oiio \
+    --skip-python \
+    --skip-numpy \
+    --skip-ocio \
+    --skip-osl \
+    --skip-osd \
+    --skip-openvdb \
+    --skip-llvm \
+    --skip-alembic \
+    --skip-opencollada \
+    --skip-ffmpeg
+
+ENV BOOST_ROOT ~/src/blender-deps/boost-1.60.0
+
 RUN mkdir ~/blender-git/blender_build && \
     cd ~/blender-git/blender_build && \
     cmake ../blender \
         -DPYTHON_INCLUDE_DIR=$(python3 -c "from distutils.sysconfig import get_python_inc; print(get_python_inc())")  \
         -DPYTHON_LIBRARY=/usr/lib64/libpython3.5m.so \
         -DPYTHON_LIBPATH=/usr/lib64 \
-        -DWITH_CYCLES=OFF \
+        -DWITH_INTERNATIONAL=OFF \
+        -DWITH_CYCLES=ON \
         -DWITH_AUDASPACE=OFF \
-        -DWITH_BOOST=OFF \
+        -DWITH_BOOST=ON \
         -DWITH_BULLET=OFF \
         -DWITH_CODEC_AVI=OFF \
         -DWITH_COMPOSITOR=OFF \
@@ -63,7 +81,7 @@ RUN mkdir ~/blender-git/blender_build && \
         -DWITH_STATIC_LIBS=ON \
         -DWITH_SYSTEM_GLEW=OFF \
         -DWITH_SYSTEM_GLES=OFF \
-        -DWITH_FREESTYLE=OFF
+        -DWITH_FREESTYLE=ON
 
 RUN cd ~/blender-git/blender_build && \
     make && \
