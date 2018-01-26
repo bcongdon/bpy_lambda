@@ -1,8 +1,26 @@
 import ctypes
 import os
 
-dir = os.path.dirname(os.path.realpath(__file__))
-ctypes.cdll.LoadLibrary(os.path.join(dir, 'libGLU.so.1'))
-ctypes.cdll.LoadLibrary(os.path.join(dir, 'libpython3.5m.so.1.0'))
+lib_dir = os.path.dirname(os.path.realpath(__file__))
+
+LIBRARIES = [
+    'libHalf.so.12',
+    'libIex.so.12',
+    'libImath.so.12',
+    'libIlmThread.so.12',
+    'libIlmImf.so.22',
+    'libOpenImageIO.so.1.7',
+    'libopenjpeg.so.2',
+    'libboost_filesystem.so.1.60.0',
+    'libboost_regex.so.1.60.0',
+    'libboost_system.so.1.60.0',
+    'libboost_thread.so.1.60.0',
+    'libpython3.6m.so.1.0',
+    'libGLU.so.1'
+]
+
+for lib in LIBRARIES:
+    print(os.path.join(lib_dir, lib))
+    ctypes.cdll.LoadLibrary(os.path.join(lib_dir, lib))
 
 from . import bpy
