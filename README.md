@@ -38,12 +38,11 @@ except ImportError:
     from bpy_lambda import bpy
 ```
 
-### A Note about Cycles
-
-The Cycles rendering engine is not included in this version of `bpy` because of the dependencies it needs to bring in. It's possible that support will be added in `bpy_lambda` for Cycles in the future if there is interest, but for now you will see an exception when you import `bpy` noting that Cycles is not found.
 
 ## Contribution / Building from Source
 
 The Dockerfile is the easiest way to create a version of `bpy` that works on Lambda. Building this docker image will download the necessary libraries and compile a minimal version of Blender that works in a Lambda environment.
 
-This dockerfile will produce a build artifact in `/bpy_lambda`. Copy all the files in this folder, add the `__init__.py` from the `bpy_lambda` Github repo into this directory, and you have a full version of `bpy_lambda`. 
+For easy installation / local setup, run `./build.sh`. This will create a directory called `bpy_lambda` that contains all the necessary package files.
+
+Running `./test.sh` will spin up a test Lambda invocation (using the excellent [lambci/docker-lambda](https://github.com/lambci/docker-lambda)). Any import or dependency errors should be caught by this test.

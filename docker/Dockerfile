@@ -75,6 +75,7 @@ RUN mkdir ~/blender-git/blender_build && \
         -DWITH_OPENAL=OFF \
         -DWITH_OPENIMAGEIO=OFF \
         -DWITH_PYTHON_INSTALL_NUMPY=OFF \
+        -DWITH_INSTALL_PORTABLE=ON \
         -DWITH_PYTHON_INSTALL_REQUESTS=OFF \
         -DWITH_PYTHON_MODULE=ON \
         -DWITH_PYTHON_INSTALL=OFF \
