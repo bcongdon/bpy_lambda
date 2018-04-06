@@ -3,7 +3,7 @@
 from setuptools import setup
 
 setup(name='bpy_lambda',
-      version='1.0',
+      version='1.2',
       description='A compiled binary of Blender-as-a-Python-Module (bpy) for use in AWS Lambda',
       author='Benjamin Congdon',
       author_email='me@bcon.gdn',
