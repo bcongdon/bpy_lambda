@@ -1,27 +1,23 @@
 # Docker file for building Blender as a Python module for AWS Lambda
 # Compiles to ~/blender-git/blender_build/bin
-FROM amazonlinux
+FROM amazonlinux:2.0.20180827
 RUN yum install git cmake -y
 RUN yum groupinstall 'Development Tools' -y
 
-RUN mkdir ~/blender-git && \
-    cd ~/blender-git && \
-    git clone https://git.blender.org/blender.git && \
-    cd blender && \
-    git checkout tags/v2.79 && \
-    git submodule update --init --recursive && \
-    git submodule foreach git checkout master && \
-    git submodule foreach git pull --rebase origin master
-
 RUN yum install gcc-c++ \
-    python36 python36-devel python36-libs \
-    libXi-devel openexr-devel \
-    freealut-devel SDL-devel fftw-devel libtiff-devel \
-    freetype-devel jack-audio-connection-kit-devel \
-    xvidcore-devel libogg-devel faac-devel \
-    libjpeg-devel openjpeg openjpeg-devel \
-    faad2-devel x264-devel libpng-devel vim \
-    libGLU-devel wget -y
+    libXi-devel openexr-devel SDL-devel fftw-devel libtiff-devel \
+    freetype-devel libogg-devel libjpeg-devel openjpeg openjpeg-devel \
+    libpng-devel vim libGLU-devel wget -y
+
+# Install Python3.6
+ENV LD_LIBRARY_PATH /usr/local/lib
+RUN cd ~ && \
+    wget https://www.python.org/ftp/python/3.6.6/Python-3.6.6.tgz && \
+    tar xzf Python-3.6.6.tgz && \
+    cd Python-3.6.6 && \
+    ./configure --enable-shared && \
+    make install && \
+    ldconfig && python3 --version
 
 RUN git clone https://github.com/nigels-com/glew ~/glew && \
     cd ~/glew && \
@@ -29,7 +25,18 @@ RUN git clone https://github.com/nigels-com/glew ~/glew && \
     make && \
     make install
 
-RUN ~/blender-git/blender/build_files/build_environment/install_deps.sh --no-sudo --no-confirm \
+RUN mkdir ~/blender-git && \
+    cd ~/blender-git && \
+    git clone --progress --no-checkout https://git.blender.org/blender.git && \
+    cd blender && \
+    git checkout tags/v2.79 && \
+    git submodule update --init --recursive && \
+    git submodule foreach git checkout master && \
+    git submodule foreach git pull --rebase origin master
+
+RUN ~/blender-git/blender/build_files/build_environment/install_deps.sh \
+    --no-sudo \
+    --no-confirm \
     --build-boost \
     --build-openexr \
     --build-oiio \
@@ -46,43 +53,47 @@ RUN ~/blender-git/blender/build_files/build_environment/install_deps.sh --no-sud
 
 ENV BOOST_ROOT ~/src/blender-deps/boost-1.60.0
 
+# Maintainer's note: calculate DPYTHON_INCLUDE_DIR with the following command:
+# ```
+# python3 -c "from distutils.sysconfig import get_python_inc; print(get_python_inc())"
+# ```
 RUN mkdir ~/blender-git/blender_build && \
     cd ~/blender-git/blender_build && \
     cmake ../blender \
-        -DPYTHON_INCLUDE_DIR=$(python3 -c "from distutils.sysconfig import get_python_inc; print(get_python_inc())")  \
-        -DPYTHON_LIBRARY=/usr/lib64/libpython3.6m.so \
-        -DPYTHON_LIBPATH=/usr/lib64 \
-        -DWITH_INTERNATIONAL=OFF \
-        -DWITH_CYCLES=ON \
-        -DWITH_AUDASPACE=OFF \
-        -DWITH_BOOST=ON \
-        -DWITH_BULLET=OFF \
-        -DWITH_CODEC_AVI=OFF \
-        -DWITH_COMPOSITOR=OFF \
-        -DWITH_COMPOSITOR=OFF \
-        -DWITH_GAMEENGINE=OFF \
-        -DWITH_GAMEENGINE_DECKLINK=OFF \
-        -DWITH_HEADLESS=ON \
-        -DWITH_IMAGE_DDS=OFF \
-        -DWITH_IMAGE_CINEON=OFF \
-        -DWITH_IMAGE_OPENEXR=OFF \
-        -DWITH_IMAGE_OPENJPEG=OFF \
-        -DWITH_IMAGE_TIFF=OFF \
-        -DWITH_INPUT_NDOF=OFF \
-        -DWITH_LIBMV=OFF \
-        -DWITH_MOD_REMESH=OFF \
-        -DWITH_MOD_SMOKE=OFF \
-        -DWITH_OPENAL=OFF \
-        -DWITH_OPENIMAGEIO=OFF \
-        -DWITH_PYTHON_INSTALL_NUMPY=OFF \
-        -DWITH_INSTALL_PORTABLE=ON \
-        -DWITH_PYTHON_INSTALL_REQUESTS=OFF \
-        -DWITH_PYTHON_MODULE=ON \
-        -DWITH_PYTHON_INSTALL=OFF \
-        -DWITH_STATIC_LIBS=ON \
-        -DWITH_SYSTEM_GLEW=OFF \
-        -DWITH_SYSTEM_GLES=OFF \
-        -DWITH_FREESTYLE=ON
+    -DPYTHON_INCLUDE_DIR=/usr/local/include/python3.6m  \
+    -DPYTHON_LIBRARY=/usr/local/lib/libpython3.6m.so \
+    -DPYTHON_LIBPATH=/usr/local/lib \
+    -DWITH_INTERNATIONAL=OFF \
+    -DWITH_CYCLES=ON \
+    -DWITH_AUDASPACE=OFF \
+    -DWITH_BOOST=ON \
+    -DWITH_BULLET=OFF \
+    -DWITH_CODEC_AVI=OFF \
+    -DWITH_COMPOSITOR=OFF \
+    -DWITH_COMPOSITOR=OFF \
+    -DWITH_GAMEENGINE=OFF \
+    -DWITH_GAMEENGINE_DECKLINK=OFF \
+    -DWITH_HEADLESS=ON \
+    -DWITH_IMAGE_DDS=OFF \
+    -DWITH_IMAGE_CINEON=OFF \
+    -DWITH_IMAGE_OPENEXR=OFF \
+    -DWITH_IMAGE_OPENJPEG=OFF \
+    -DWITH_IMAGE_TIFF=OFF \
+    -DWITH_INPUT_NDOF=OFF \
+    -DWITH_LIBMV=OFF \
+    -DWITH_MOD_REMESH=OFF \
+    -DWITH_MOD_SMOKE=OFF \
+    -DWITH_OPENAL=OFF \
+    -DWITH_OPENIMAGEIO=OFF \
+    -DWITH_PYTHON_INSTALL_NUMPY=OFF \
+    -DWITH_INSTALL_PORTABLE=ON \
+    -DWITH_PYTHON_INSTALL_REQUESTS=OFF \
+    -DWITH_PYTHON_MODULE=ON \
+    -DWITH_PYTHON_INSTALL=OFF \
+    -DWITH_STATIC_LIBS=ON \
+    -DWITH_SYSTEM_GLEW=OFF \
+    -DWITH_SYSTEM_GLES=OFF \
+    -DWITH_FREESTYLE=ON
 
 RUN cd ~/blender-git/blender_build && \
     make && \
@@ -98,12 +109,12 @@ RUN mkdir /bpy_lambda && \
     cp -L /opt/lib/openexr-2.2.0/lib/libIlmThread.so.12 . && \
     cp -L /opt/lib/openexr-2.2.0/lib/libImath.so.12 . && \
     cp -L /opt/lib/oiio-1.7.15/lib/libOpenImageIO.so.1.7 . && \
-    cp -L /usr/lib64/libopenjpeg.so.2 . && \
+    cp -L /usr/lib64/libopenjpeg.so.1 libopenjpeg.so.2 && \
     cp -L /opt/lib/boost-1.60.0/lib/libboost_filesystem.so.1.60.0 . && \
     cp -L /opt/lib/boost-1.60.0/lib/libboost_regex.so.1.60.0 . && \
     cp -L /opt/lib/boost/lib/libboost_system.so.1.60.0 . && \
     cp -L /opt/lib/boost/lib/libboost_thread.so.1.60.0 . && \
-    cp -L /usr/lib64/libpython3.6m.so.1.0 . && \
+    cp -L /usr/local/lib/libpython3.6m.so.1.0 . && \
     cp -L /usr/lib64/libGLU.so.1 .
 
 # Build artifact stored in /bpy_lambda
