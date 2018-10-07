@@ -1,6 +1,6 @@
 # Docker file for building Blender as a Python module for AWS Lambda
 # Compiles to ~/blender-git/blender_build/bin
-FROM amazonlinux:2.0.20180827
+FROM amazonlinux:2017.03
 RUN yum install git cmake -y
 RUN yum groupinstall 'Development Tools' -y
 
@@ -109,7 +109,7 @@ RUN mkdir /bpy_lambda && \
     cp -L /opt/lib/openexr-2.2.0/lib/libIlmThread.so.12 . && \
     cp -L /opt/lib/openexr-2.2.0/lib/libImath.so.12 . && \
     cp -L /opt/lib/oiio-1.7.15/lib/libOpenImageIO.so.1.7 . && \
-    cp -L /usr/lib64/libopenjpeg.so.1 libopenjpeg.so.2 && \
+    cp -L /usr/lib64/libopenjpeg.so.2 . && \
     cp -L /opt/lib/boost-1.60.0/lib/libboost_filesystem.so.1.60.0 . && \
     cp -L /opt/lib/boost-1.60.0/lib/libboost_regex.so.1.60.0 . && \
     cp -L /opt/lib/boost/lib/libboost_system.so.1.60.0 . && \
