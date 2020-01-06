@@ -80,7 +80,7 @@ RUN mkdir ~/blender-git/blender_build && \
     -DWITH_IMAGE_TIFF=OFF \
     -DWITH_INPUT_NDOF=OFF \
     -DWITH_LIBMV=OFF \
-    -DWITH_MOD_REMESH=OFF \
+    -DWITH_MOD_REMESH=ON \
     -DWITH_MOD_SMOKE=OFF \
     -DWITH_OPENAL=OFF \
     -DWITH_OPENIMAGEIO=OFF \
