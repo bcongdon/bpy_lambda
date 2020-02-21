@@ -1,6 +1,6 @@
 # Docker file for building Blender as a Python module for AWS Lambda
 # Compiles to ~/blender-git/blender_build/bin
-FROM amazonlinux:2017.03
+FROM amazonlinux:2018.03
 RUN yum install git cmake -y
 RUN yum groupinstall 'Development Tools' -y
 
