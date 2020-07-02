@@ -102,3 +102,4 @@ ENV/
 
 # Don't include build files in source tree
 bpy_lambda/
+bpy_lambda_layer.zip
