@@ -2,9 +2,11 @@
 # Compiles to ~/blender-git/blender_build/bin
 FROM amazonlinux:2018.03
 RUN yum groupinstall 'Development Tools' -y
-RUN yum install gcc72 gcc72-c++ git subversion make libX11-devel libXi-devel libXcursor-devel libXrandr-devel libXinerama-devel libstdc++-static \
-    libtiff-devel libpng-devel libjpeg-devel openjpeg openjpeg-devel freetype-devel \
-    wget -y
+RUN yum install gcc72 gcc72-c++ git subversion make libX11-devel libXi-devel \
+    libXcursor-devel libXrandr-devel libXinerama-devel libstdc++-static \
+    libtiff-devel libpng-devel libjpeg-devel openjpeg openjpeg-devel \
+    freetype-devel wget libXmu-devel libXi-devel libGL-devel bzip2 sudo libffi \
+    libffi-devel freeglut-devel fftw-devel -y
 
 RUN wget https://cmake.org/files/v3.10/cmake-3.10.0.tar.gz && \
     tar -xvzf cmake-3.10.0.tar.gz && \
@@ -13,17 +15,6 @@ RUN wget https://cmake.org/files/v3.10/cmake-3.10.0.tar.gz && \
     make && \
     make install
 
-# Install Python3.7
-#ENV LD_LIBRARY_PATH /usr/local/lib
-#RUN cd ~ && \
-#    wget https://www.python.org/ftp/python/3.7.8/Python-3.7.8.tgz && \
-#    tar xzf Python-3.7.8.tgz && \
-#    cd Python-3.7.8 && \
-#    ./configure --enable-shared && \
-#    make install && \
-#    ldconfig && python3 --version
-
-RUN yum install libXmu-devel libXi-devel libGL-devel -y
 RUN git clone https://github.com/nigels-com/glew ~/glew && \
     cd ~/glew && \
     make extensions && \
@@ -39,7 +30,6 @@ RUN mkdir ~/blender-git && \
     git submodule foreach git checkout master && \
     git submodule foreach git pull --rebase origin master
 
-RUN yum install bzip2 sudo libffi libffi-devel freeglut-devel fftw-devel -y
 RUN cd ~/blender-git && \
     ./blender/build_files/build_environment/install_deps.sh \
     --no-sudo \
