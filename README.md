@@ -40,7 +40,7 @@ except ImportError:
 
 ### AWS Lambda Layer
 
-AWS Lambda has limits on package size. It is better to package this module as a layer for AWS Lambda. The script `./lamda_layer.sh` will create `bpy_lambda_layer.zip`, which can be used to create a new AWS Lambda Layer.
+AWS Lambda has limits on package size. It is better to package this module as a layer for AWS Lambda. The script `./lambda_layer.sh` will create `bpy_lambda_layer.zip`, which can be used to create a new AWS Lambda Layer.
 
 ## Contribution / Building from Source
 
